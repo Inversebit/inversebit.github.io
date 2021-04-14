@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.0 -->
+<title>Bannik | Inversebit</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Bannik" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="A status monitoring semaphore" />
+<meta property="og:description" content="A status monitoring semaphore" />
+<link rel="canonical" href="http://localhost:4000/hw/sw/arduino/2016/12/15/bannik.html" />
+<meta property="og:url" content="http://localhost:4000/hw/sw/arduino/2016/12/15/bannik.html" />
+<meta property="og:site_name" content="Inversebit" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-12-15T00:00:00+01:00" />
+<script type="application/ld+json">
+{"description":"A status monitoring semaphore","@type":"BlogPosting","url":"http://localhost:4000/hw/sw/arduino/2016/12/15/bannik.html","headline":"Bannik","dateModified":"2016-12-15T00:00:00+01:00","datePublished":"2016-12-15T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/hw/sw/arduino/2016/12/15/bannik.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Inversebit" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Inversebit</a>
+
+    
+    <div class="site-header-social"><ul class="social-media-list"><li><a href="https://github.com/inversebit"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">inversebit</span></a></li></ul>
+</div>
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Bannik</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2016-12-15T00:00:00+01:00" itemprop="datePublished">Dec 15, 2016
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <h2 id="project-bannik---a-status-monitoring-semaphore">Project Bannik - A status monitoring semaphore</h2>
+<blockquote>
+  <p>Status: Abandoned</p>
+</blockquote>
+
+<p>Project bannik is created as a platform to receive and show real-time alerts regarding the status of any computer system. In my particular case the main objective is to use it as a device to show alerts regarding uptime in web pages and apps, REST services and other software systems some of my other programs depend upon.</p>
+
+<p>Bannik will be formed by a hardware device and a software counterpart to control it. The hardware will be acquired keeping a low cost in mind and using what I have laying around. Regarding software, only open source systems will be used.</p>
+
+<p>I visualize an unconventional “semaphore” regarding current standards. The idea is to use a single multicolor disc to show a status quickly (via colors) and a screen to get further information on an alert. Some sort of acoustic signal could be an improvement. The device could be mounted on a wall, or placed on a desk.</p>
+
+<p><img src="/assets/bannik/00_bannik_sketch.png" alt="Bannik sketch" /></p>
+
+<p>Regarding the screen I would like to use some sort of panel that is easy to read, I have my mind set on an  epaper one. Going back to the “disc”, something regarding RGB LEDs could be useful.</p>
+
+<p>I’ve already specified the innards of the bannik monitor:</p>
+<ul>
+  <li>A RaspberryPi Model B (1st gen), it will run on Raspbian Jessie Lite</li>
+  <li>A TPlink TL-WN722N, to bless the RPi with WiFI connectivity</li>
+  <li>An Amazon kindle 4, as readable “more info” screen</li>
+  <li>Two RGB LED Rings, 24 and 12 LEDs respectively</li>
+  <li>To power all of this I got a 25W (5V, 5A) power supply</li>
+</ul>
+
+<p>Let’s talk about the list: First, the RPi. I had it laying around. I think current RPis are a bit overpriced, but very capable devices. I considered an Arduino, which would be a better candidate to interface with the hardware, but, it’s easier to make an RPi host a REST API + other future improvement ideas, than an Arduino. Regarding the WiFi dongle, I’ve got nothing to say. It was cheap on amazon, some people said it worked, others that not. Well, when I got it I plugged it in the RPi and worked flawlessly. No driver installation, no kernel module recompilation, no nothing.</p>
+
+<p>The kindle is my answer to an easily readable screen to get further information on bannik’s alerts. But, multiple problems arise: How am I going to show content which isn’t a book? How am I going to power it? And… The screen is too small. At least I bought it pretty cheap from an auction on ebay, let’s see what I can do with it.</p>
+
+<p>LED Rings… They’re a copy of Adafruit’s wonderful <a href="https://www.adafruit.com/product/1586">NEOPixel Rings</a>. I would have bought the Adafruit’s ones, would they be easily available in my country. But it’s easier to search ebay for cheap electronic components than to visit every European Adafruit distributor and find in their online stores what I’m looking for. Slight problem… 36 Neopixel LEDs require 60mAx36=2.16A. No way I’m pulling that from the RPi.</p>
+
+<p>So here’s the solution to my power-related problems: A power supply. Putting an internal power supply in the bannik device will cover all my power needs an minimize the cords running to it. A single cable from the outlet to the device is all I need. I worry 5A may not be enough to power all the devices, it’ll probably be a close one.</p>
+
+<p>And now… a shell to hide all of this. I will use balsa wood or plywood to make a case. 3D printed supports will hold everything in place inside. The problem lies on the front of the device. Cutting out a circle in a wood sheet to show the LED rings won’t be a problem, but cutting out a rectangle for the kindle may be, so I’m considering 3D printing the whole front of the device.</p>
+
+<p><img src="/assets/bannik/03_mounting_brackets.png" alt="Bannik mounting brackets" /></p>
+
+<p>Planning how to place everything inside, without the components interfering with each other is proving difficult, especially trying to minimize the footprint of the device.</p>
+
+<p><img src="/assets/bannik/01_placing.png" alt="Bannik placing" />
+<img src="/assets/bannik/02_placing2.png" alt="Bannik placing 02" /></p>
+
+
+  </div><a class="u-url" href="/hw/sw/arduino/2016/12/15/bannik.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+  </div>
+
+</footer>
+</body>
+
+</html>

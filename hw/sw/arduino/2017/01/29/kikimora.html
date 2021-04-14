@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.0 -->
+<title>Kikimora | Inversebit</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Kikimora" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="An ESP8266-based systems monitoring device" />
+<meta property="og:description" content="An ESP8266-based systems monitoring device" />
+<link rel="canonical" href="http://localhost:4000/hw/sw/arduino/2017/01/29/kikimora.html" />
+<meta property="og:url" content="http://localhost:4000/hw/sw/arduino/2017/01/29/kikimora.html" />
+<meta property="og:site_name" content="Inversebit" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-01-29T00:00:00+01:00" />
+<script type="application/ld+json">
+{"description":"An ESP8266-based systems monitoring device","@type":"BlogPosting","url":"http://localhost:4000/hw/sw/arduino/2017/01/29/kikimora.html","headline":"Kikimora","dateModified":"2017-01-29T00:00:00+01:00","datePublished":"2017-01-29T00:00:00+01:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/hw/sw/arduino/2017/01/29/kikimora.html"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Inversebit" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Inversebit</a>
+
+    
+    <div class="site-header-social"><ul class="social-media-list"><li><a href="https://github.com/inversebit"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">inversebit</span></a></li></ul>
+</div>
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Kikimora</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2017-01-29T00:00:00+01:00" itemprop="datePublished">Jan 29, 2017
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><a href="https://github.com/Inversebit/kikimora">Repo Link</a></p>
+
+<p>Kikimora was born form an idea given to me by colleague at work. The idea was to create a simple device, which with the aid of two LEDs would indicate if a computer system is up or down. The device could be set on top of any computer screen in order to make it easy to check out.</p>
+
+<p>I specified further what I would try to accomplish and thought of the following: The device would be configured to ping or somehow GET a webpage every X seconds. If the page responded with a 200 HTTP code, let’s light the green LED, any other message: red LED.</p>
+
+<p>After that I added some requirements to the device: to make it self-contained, as simple as possible to use, and small (in that order). So, I started the hunt for an arduino-like platform with embedded WiFi capabilities, and landed on the <a href="https://en.wikipedia.org/wiki/ESP8266">ESP8266</a> module family. I bought an ESP8266-01 and ESP8266-12E, because they are dirty cheap. I ended up using the 01, the reason is simple, I liked the restrictions imposed upon me by using such a “simple” device. It only offered me a WiFi link and 2 GPIO ports (though I’m sure someone has already invented some kind of hack to use the RX/TX ports for GPIO).</p>
+
+<h3 id="programming">PROGRAMMING</h3>
+<p>After a long afternoon programming the ESP8266 I managed to cram a program which did the following:</p>
+<ul>
+  <li>Setup a Wifi connection to a hardcoded network (eaasyyyyyy)</li>
+  <li>Setup an internal timer (based on the OSs functionality, and not some cheesy software hack)</li>
+  <li>Host a configuration page to setup the page to monitor</li>
+  <li>Write some code to light a LED or the other based on the target website’s status</li>
+</ul>
+
+<p>I took into account the hardware limitations and avoided to work too long in the device’s main (and only?) thread.</p>
+
+<p>The code is available in the project’s repo, linked at the start of this article.</p>
+
+<h3 id="electronics">ELECTRONICS</h3>
+<p>The electronics were pretty basic, in the end it’s just a microcontroller and two LEDs. In order to pursue the “simplicity” aspect of the project I wanted to supply the juice via an USB port, like most handheld devices around us. Two problems arise: 1. A micro-usb port is probably fragile + difficult to solder in a perfboard. 2. USB provides 5V… and the ESP8266 needs 3.3V.</p>
+
+<p>The first one I solved using and old-school USB-A female port. To solve the second one I wanted to get away with a voltage divider, but due to the laws of electronics it wound up to be a difficult task, so I summoned all my patience, order a bunch of voltage regulators on ebay and put the project on hold for a week. When they arrived everything worked perfectly.</p>
+
+<p>The schematic for the circuit is as follows:<br />
+<img src="/assets/kikimora/schema.png" alt="Schema" /></p>
+
+<p>First, sorry for putting an ESP8266 which is the wrong module in the schematic, but I didn’t find the 01… Secondly, there is no much mystery to it. The resistor after the LEDs should avoid the build up of “infinite” current, and that’s all.</p>
+
+<p>The first prototypes I tried out in the proverbial protoboard. The <em>definitive</em> circuit was build on a perfboard. Pretty badly. I should get a better soldering iron and something to hold the board and components while I solder them. Sorry for the terrible craftsmanship you’ll see in the photos.
+<img src="/assets/kikimora/000.JPG" alt="an_angle" />
+<img src="/assets/kikimora/001.JPG" alt="another_angle" />
+<img src="/assets/kikimora/002.JPG" alt="back_angle" /></p>
+
+<p>There are two more things I would like to talk about: First the operating voltage. As you have probably notices there is a voltage regulator which reduces the USB’s 5V to 3.3V for the ESP8266. The bad thing about this is that the LEDs will be slightly underpowered, emitting only a very faint light.</p>
+
+<p>Secondly, the ESP8266 is mounted on some pins and not directly soldered to the perfboard. This is so in order to make it easier to reprogram the microchip in the future without much hassle. The downside: The high occupied by the whole ensemble, which is quite a lot for a device of this size.</p>
+
+<h3 id="exterior">EXTERIOR</h3>
+<p>The exterior is a simple parallelepiped or a rectangle with volume. I made it so that I could be easily opened in the middle and accommodate all the components (mainly regarding height).</p>
+
+<p><img src="/assets/kikimora/005.JPG" alt="case" /></p>
+
+<p>The bottom part of the case takes the board. The perfboard is mounted on two screws and the edge of the case, leaving a bit of space beneath for some cables and solder blobs. The top was build with the height constraints in mind. There are two holes for the LEDs to go through, and a notch for the upper half of the USB port.</p>
+
+<p>I designed the case in <a href="https://www.freecadweb.org/">FreeCAD</a> (in a pretty unorthodox way, regarding good practices). The top half was a bit of trial and error thing, it was difficult to define the right height for the piece and LED hole diameter, taking into account my printer’s tolerances and accuracy error.</p>
+
+<p>I exported the models to STL meshes and converted them to gcode using <a href="https://ultimaker.com/en/products/cura-software">Cura 15</a>. Then I printed the case in my <em>Prusa i3</em>-model 3D-printer in PLA plastic.</p>
+
+<h3 id="putting-it-together">PUTTING IT TOGETHER</h3>
+<p>To finish it of I glued the LEDs to the perfboard with some silicone sealant and decided to bend the voltage regulator beneath the ESP8266 board in order to avoid it hitting the top of the case. As it doesn’t heat up too much I think it won’t cause a problem there.</p>
+
+<p><img src="/assets/kikimora/003.JPG" alt="together" /></p>
+
+<p>And inside its case:<br />
+<img src="/assets/kikimora/004.JPG" alt="together" /></p>
+
+<p>The ESP8266’s code, CAD and STL models are all open source. You can find a link to the repo in the upper part of this page.</p>
+
+  </div><a class="u-url" href="/hw/sw/arduino/2017/01/29/kikimora.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+  </div>
+
+</footer>
+</body>
+
+</html>
